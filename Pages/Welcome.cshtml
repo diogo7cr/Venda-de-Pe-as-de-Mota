@@ -1,0 +1,38 @@
+@page
+@model MotoPartsShop.Pages.WelcomeModel
+@{
+    ViewData["Title"] = "Bem-vindo!";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-success text-white text-center">
+                <h2>🎉 Bem-vindo ao MotoPartsShop!</h2>
+            </div>
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h3>Vamos completar o teu perfil!</h3>
+                </div>
+
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Primeiro Nome *</label>
+                            <input type="text" name="PrimeiroNome" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Último Nome *</label>
+                            <input type="text" name="UltimoNome" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Data de Nascimento</label>
+                        <input type="date" name="DataNascimento" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100">Continuar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

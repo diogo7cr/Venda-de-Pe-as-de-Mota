@@ -1,0 +1,157 @@
+@page
+@model MotoPartsShop.Pages.Admin.Cupoes.CreateModel
+@{
+    ViewData["Title"] = "Criar Cupão";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-plus-circle"></i> Criar Novo Cupão
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.Codigo" class="form-label fw-bold">
+                                    <i class="bi bi-ticket-perforated"></i> Código do Cupão
+                                </label>
+                                <input asp-for="Cupao.Codigo" class="form-control form-control-lg text-uppercase" 
+                                       placeholder="Ex: BEMVINDO10" maxlength="20" required />
+                                <span asp-validation-for="Cupao.Codigo" class="text-danger"></span>
+                                <small class="form-text text-muted">Será convertido automaticamente para maiúsculas</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.PercentagemDesconto" class="form-label fw-bold">
+                                    <i class="bi bi-percent"></i> Desconto (%)
+                                </label>
+                                <input asp-for="Cupao.PercentagemDesconto" class="form-control form-control-lg" 
+                                       type="number" min="0" max="100" step="0.01" required />
+                                <span asp-validation-for="Cupao.PercentagemDesconto" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Cupao.Descricao" class="form-label fw-bold">
+                                <i class="bi bi-card-text"></i> Descrição
+                            </label>
+                            <input asp-for="Cupao.Descricao" class="form-control" 
+                                   placeholder="Ex: Desconto de boas-vindas para novos clientes" required />
+                            <span asp-validation-for="Cupao.Descricao" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.DataInicio" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event"></i> Data de Início
+                                </label>
+                                <input asp-for="Cupao.DataInicio" class="form-control" type="date" required />
+                                <span asp-validation-for="Cupao.DataInicio" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.DataFim" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-check"></i> Data de Fim
+                                </label>
+                                <input asp-for="Cupao.DataFim" class="form-control" type="date" required />
+                                <span asp-validation-for="Cupao.DataFim" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.ValorMinimo" class="form-label fw-bold">
+                                    <i class="bi bi-currency-euro"></i> Valor Mínimo de Compra (€)
+                                </label>
+                                <input asp-for="Cupao.ValorMinimo" class="form-control" 
+                                       type="number" min="0" step="0.01" required />
+                                <span asp-validation-for="Cupao.ValorMinimo" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Cupao.LimiteUtilizacoes" class="form-label fw-bold">
+                                    <i class="bi bi-123"></i> Limite de Utilizações
+                                </label>
+                                <input asp-for="Cupao.LimiteUtilizacoes" class="form-control" 
+                                       type="number" min="1" placeholder="Deixe vazio para ilimitado" />
+                                <span asp-validation-for="Cupao.LimiteUtilizacoes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input asp-for="Cupao.Ativo" class="form-check-input" type="checkbox" 
+                                       role="switch" id="ativoSwitch" />
+                                <label class="form-check-label fw-bold" for="ativoSwitch">
+                                    <i class="bi bi-toggle-on"></i> Cupão Ativo
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Pré-visualização:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Código: <strong id="preview-codigo">-</strong></li>
+                                <li>Desconto: <strong id="preview-desconto">-</strong></li>
+                                <li>Compra mínima: <strong id="preview-minimo">-</strong></li>
+                                <li>Validade: <strong id="preview-validade">-</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Criar Cupão
+                            </button>
+                            <a asp-page="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Pré-visualização em tempo real
+        function updatePreview() {
+            const codigo = document.querySelector('input[name="Cupao.Codigo"]').value.toUpperCase() || '-';
+            const desconto = document.querySelector('input[name="Cupao.PercentagemDesconto"]').value || '-';
+            const minimo = document.querySelector('input[name="Cupao.ValorMinimo"]').value || '-';
+            const dataInicio = document.querySelector('input[name="Cupao.DataInicio"]').value;
+            const dataFim = document.querySelector('input[name="Cupao.DataFim"]').value;
+
+            document.getElementById('preview-codigo').textContent = codigo;
+            document.getElementById('preview-desconto').textContent = desconto + '%';
+            document.getElementById('preview-minimo').textContent = '€' + minimo;
+            
+            if (dataInicio && dataFim) {
+                const inicio = new Date(dataInicio).toLocaleDateString('pt-PT');
+                const fim = new Date(dataFim).toLocaleDateString('pt-PT');
+                document.getElementById('preview-validade').textContent = inicio + ' até ' + fim;
+            } else {
+                document.getElementById('preview-validade').textContent = '-';
+            }
+        }
+
+        // Atualizar pré-visualização ao digitar
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+
+        // Atualizar ao carregar
+        updatePreview();
+    </script>
+}

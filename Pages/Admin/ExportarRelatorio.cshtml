@@ -1,0 +1,109 @@
+@page
+@model MotoPartsShop.Pages.Admin.ExportarRelatorioModel
+@{
+    ViewData["Title"] = "Exportar Relatório";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Relatório de Vendas
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>O que será exportado:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>📊 Resumo com estatísticas gerais</li>
+                            <li>📋 Lista detalhada de pedidos</li>
+                            <li>🏆 Produtos mais vendidos</li>
+                            <li>📅 Vendas por dia</li>
+                        </ul>
+                    </div>
+
+                    <form method="get">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event"></i> Data Início
+                                </label>
+                                <input type="date" class="form-control form-control-lg" 
+                                       name="dataInicio" 
+                                       value="@DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")" 
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-calendar-check"></i> Data Fim
+                                </label>
+                                <input type="date" class="form-control form-control-lg" 
+                                       name="dataFim" 
+                                       value="@DateTime.Now.ToString("yyyy-MM-dd")" 
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-lightning"></i> Períodos Rápidos:
+                            </label>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-primary periodo-btn" data-dias="7">
+                                    Últimos 7 dias
+                                </button>
+                                <button type="button" class="btn btn-outline-primary periodo-btn" data-dias="30">
+                                    Últimos 30 dias
+                                </button>
+                                <button type="button" class="btn btn-outline-primary periodo-btn" data-dias="90">
+                                    Últimos 90 dias
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-download"></i> Gerar e Descarregar Relatório Excel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <a asp-page="/Dashboard" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+                </a>
+                <a asp-page="/Pecas/ExportarCatalogo" class="btn btn-outline-primary">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Exportar Catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.periodo-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const dias = parseInt(this.dataset.dias);
+                const hoje = new Date();
+                const inicio = new Date();
+                inicio.setDate(hoje.getDate() - dias);
+
+                const formatData = (data) => {
+                    const ano = data.getFullYear();
+                    const mes = String(data.getMonth() + 1).padStart(2, '0');
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    return `${ano}-${mes}-${dia}`;
+                };
+
+                document.querySelector('input[name="dataInicio"]').value = formatData(inicio);
+                document.querySelector('input[name="dataFim"]').value = formatData(hoje);
+            });
+        });
+    </script>
+}

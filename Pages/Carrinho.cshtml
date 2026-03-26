@@ -1,0 +1,76 @@
+@page
+@model MotoPartsShop.Pages.CarrinhoModel
+
+@{
+    ViewData["Title"] = "Carrinho de Compras";
+}
+
+<h1>🛒 Carrinho de Compras</h1>
+
+@if (Model.Itens.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Imagem</th>
+                    <th>Peça</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Itens)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.ImagemUrl" alt="@item.Nome" style="width: 80px; height: 80px; object-fit: cover;">
+                        </td>
+                        <td><strong>@item.Nome</strong></td>
+                        <td>€@item.Preco</td>
+                        <td>
+                            <form method="post" asp-page-handler="AtualizarQuantidade" class="d-inline">
+                                <input type="hidden" name="pecaId" value="@item.PecaId" />
+                                <input type="number" name="quantidade" value="@item.Quantidade" 
+                                       min="1" class="form-control" style="width: 80px;" 
+                                       onchange="this.form.submit()">
+                            </form>
+                        </td>
+                        <td><strong>€@item.Subtotal</strong></td>
+                        <td>
+                            <form method="post" asp-page-handler="Remover" class="d-inline">
+                                <input type="hidden" name="pecaId" value="@item.PecaId" />
+                                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end"><h4>Total:</h4></td>
+                    <td colspan="2"><h4 class="text-success">€@Model.Total</h4></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <form method="post" asp-page-handler="Limpar">
+            <button type="submit" class="btn btn-warning">🗑️ Limpar Carrinho</button>
+        </form>
+        <a asp-page="/Pecas/Index" class="btn btn-secondary">← Continuar Comprando</a>
+       <a asp-page="/Checkout" class="btn btn-success btn-lg">✓ Finalizar Compra</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Carrinho vazio!</h4>
+        <p>Ainda não adicionaste nenhuma peça ao carrinho.</p>
+        <hr>
+        <a asp-page="/Pecas/Index" class="btn btn-primary">Ver Catálogo</a>
+    </div>
+}

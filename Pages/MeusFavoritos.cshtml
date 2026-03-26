@@ -1,0 +1,225 @@
+@page
+@model MotoPartsShop.Pages.MeusFavoritosModel
+
+@{
+    ViewData["Title"] = "Meus Favoritos";
+}
+
+<div class="container py-5">
+    <h1 class="display-5 fw-bold mb-4">
+        <i class="bi bi-heart-fill text-danger"></i> Meus Favoritos
+    </h1>
+
+    @if (Model.Favoritos.Any())
+    {
+        <div class="row g-4">
+            @foreach (var fav in Model.Favoritos)
+            {
+                var peca = fav.Peca;
+                if (peca != null)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="product-card">
+                            <!-- BADGE REMOVER -->
+                            <div class="product-badges">
+                                <form method="post" asp-page-handler="Remover">
+                                    <input type="hidden" name="favoritoId" value="@fav.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger rounded-circle" title="Remover dos Favoritos">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- IMAGEM -->
+                            <div class="product-image-wrapper">
+                                <img src="@peca.ImagemUrl" alt="@peca.Nome" class="product-image">
+                                <div class="product-overlay">
+                                    <div class="product-actions">
+                                        <a asp-page="/Pecas/Details" asp-route-id="@peca.Id" 
+                                           class="btn btn-light btn-sm rounded-circle">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- INFO -->
+                            <div class="product-info">
+                                <div class="product-category">
+                                    <i class="bi bi-tag-fill"></i> @peca.Categoria?.Nome
+                                </div>
+                                <h5 class="product-title">@peca.Nome</h5>
+                                <div class="product-ref">
+                                    <small class="text-muted">Ref: @peca.Referencia</small>
+                                </div>
+                                
+                                <div class="product-meta">
+                                    <span><i class="bi bi-building"></i> @peca.Modelo?.Marca?.Nome</span>
+                                    <span><i class="bi bi-motorcycle"></i> @peca.Modelo?.Nome</span>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-price">
+                                        €@peca.Preco
+                                    </div>
+                                    <div class="product-stock">
+                                        @if (peca.Stock > 0)
+                                        {
+                                            <span class="badge bg-success">@peca.Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Esgotado</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <form method="post" asp-page="/Carrinho" asp-page-handler="Adicionar" class="mt-3">
+                                    <input type="hidden" name="pecaId" value="@peca.Id" />
+                                    <input type="hidden" name="nome" value="@peca.Nome" />
+                                    <input type="hidden" name="preco" value="@peca.Preco" />
+                                    <input type="hidden" name="imagemUrl" value="@peca.ImagemUrl" />
+                                    <button type="submit" class="btn btn-primary w-100" 
+                                            @(peca.Stock == 0 ? "disabled" : "")>
+                                        <i class="bi bi-cart-plus-fill"></i> Adicionar ao Carrinho
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-heart" style="font-size: 3rem;"></i>
+            <h4 class="mt-3">Ainda não tens favoritos</h4>
+            <p>Explora o catálogo e adiciona as tuas peças favoritas!</p>
+            <a asp-page="/Pecas/Index" class="btn btn-primary mt-3">
+                <i class="bi bi-grid"></i> Ver Catálogo
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .product-badges {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+    
+    .product-image-wrapper {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+        background: #f5f5f5;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.5s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.1);
+    }
+    
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%);
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+    
+    .product-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .product-actions .btn {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    
+    .product-info {
+        padding: 1.25rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-category {
+        color: #667eea;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1A1A2E;
+        margin-bottom: 0.5rem;
+        min-height: 2.5rem;
+    }
+    
+    .product-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #666;
+        margin: 1rem 0;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .product-price {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #06D6A0;
+    }
+</style>

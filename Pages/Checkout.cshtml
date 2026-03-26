@@ -1,0 +1,264 @@
+@page
+@model MotoPartsShop.Pages.CheckoutModel
+
+@{
+    ViewData["Title"] = "Finalizar Compra";
+}
+
+<h1>✓ Finalizar Compra</h1>
+
+<div class="row">
+    <!-- Coluna Esquerda: Formulário -->
+    <div class="col-md-7">
+        <!-- CUPÃO DE DESCONTO -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">
+                    <i class="bi bi-ticket-perforated"></i> Cupão de Desconto
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (TempData["SucessoCupao"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="bi bi-check-circle"></i> @TempData["SucessoCupao"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErroCupao"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="bi bi-exclamation-triangle"></i> @TempData["ErroCupao"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["InfoCupao"] != null)
+                {
+                    <div class="alert alert-info alert-dismissible fade show">
+                        <i class="bi bi-info-circle"></i> @TempData["InfoCupao"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (Model.CupaoAplicado != null)
+                {
+                    <!-- Cupão já aplicado -->
+                    <div class="cupao-aplicado">
+                        <div class="d-flex justify-content-between align-items-center p-3 bg-success-subtle rounded">
+                            <div>
+                                <h5 class="mb-1">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    Cupão <strong>@Model.CupaoAplicado.Codigo</strong> Aplicado!
+                                </h5>
+                                <p class="mb-0 text-muted">
+                                    @Model.CupaoAplicado.Descricao
+                                </p>
+                                <p class="mb-0">
+                                    <strong class="text-success">
+                                        -€@Model.ValorDesconto.ToString("F2") (@Model.CupaoAplicado.PercentagemDesconto% de desconto)
+                                    </strong>
+                                </p>
+                            </div>
+                            <form method="post" asp-page-handler="RemoverCupao">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-x-circle"></i> Remover
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Formulário para aplicar cupão -->
+                    <form method="post" asp-page-handler="AplicarCupao">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-ticket-perforated"></i>
+                            </span>
+                            <input type="text" 
+                                   class="form-control form-control-lg text-uppercase" 
+                                   name="CodigoCupao"
+                                   placeholder="Digite o código do cupão"
+                                   maxlength="20"
+                                   required>
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-check-circle"></i> Aplicar
+                            </button>
+                        </div>
+                        <small class="form-text text-muted mt-2 d-block">
+                            <i class="bi bi-info-circle"></i> Tem um cupão de desconto? Insira o código acima.
+                        </small>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO DE DADOS -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📋 Dados de Envio</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label asp-for="NomeCliente" class="form-label">Nome Completo *</label>
+                        <input asp-for="NomeCliente" class="form-control" required />
+                        <span asp-validation-for="NomeCliente" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">Email *</label>
+                            <input asp-for="Email" type="email" class="form-control" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Telefone" class="form-label">Telefone *</label>
+                            <input asp-for="Telefone" type="tel" class="form-control" required />
+                            <span asp-validation-for="Telefone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Morada" class="form-label">Morada *</label>
+                        <input asp-for="Morada" class="form-control" required />
+                        <span asp-validation-for="Morada" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="CodigoPostal" class="form-label">Código Postal *</label>
+                            <input asp-for="CodigoPostal" class="form-control" placeholder="0000-000" required />
+                            <span asp-validation-for="CodigoPostal" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Cidade" class="form-label">Cidade *</label>
+                            <input asp-for="Cidade" class="form-control" required />
+                            <span asp-validation-for="Cidade" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5>💳 Método de Pagamento</h5>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="MetodoPagamento" id="mbway" value="MBWay" required>
+                            <label class="form-check-label" for="mbway">
+                                MBWay
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="MetodoPagamento" id="multibanco" value="Multibanco" required>
+                            <label class="form-check-label" for="multibanco">
+                                Multibanco
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="MetodoPagamento" id="cartao" value="Cartão de Crédito" required>
+                            <label class="form-check-label" for="cartao">
+                                Cartão de Crédito/Débito
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="MetodoPagamento" id="transferencia" value="Transferência Bancária" required>
+                            <label class="form-check-label" for="transferencia">
+                                Transferência Bancária
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            ✓ Confirmar Pedido - €@Model.Total.ToString("F2")
+                        </button>
+                        <a asp-page="/Carrinho" class="btn btn-secondary">← Voltar ao Carrinho</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coluna Direita: Resumo -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📦 Resumo do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.Itens)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6 class="my-0">@item.Nome</h6>
+                                <small class="text-muted">Quantidade: @item.Quantidade</small>
+                            </div>
+                            <span class="text-muted">€@item.Subtotal.ToString("F2")</span>
+                        </li>
+                    }
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <strong>€@Model.Subtotal.ToString("F2")</strong>
+                    </li>
+
+                    @if (Model.ValorDesconto > 0)
+                    {
+                        <li class="list-group-item d-flex justify-content-between text-success">
+                            <span>
+                                <i class="bi bi-ticket-perforated"></i> Desconto (@Model.CupaoAplicado?.Codigo):
+                            </span>
+                            <strong>-€@Model.ValorDesconto.ToString("F2")</strong>
+                        </li>
+                    }
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Portes de Envio</span>
+                        @if (Model.ValorEnvio == 0)
+                        {
+                            <strong class="text-success">Grátis</strong>
+                        }
+                        else
+                        {
+                            <strong>€@Model.ValorEnvio.ToString("F2")</strong>
+                        }
+                    </li>
+
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <strong>Total</strong>
+                        <strong class="text-success">€@Model.Total.ToString("F2")</strong>
+                    </li>
+                </ul>
+
+                @if (Model.ValorDesconto > 0)
+                {
+                    <div class="alert alert-success mb-3">
+                        <i class="bi bi-piggy-bank"></i>
+                        <strong>Poupou €@Model.ValorDesconto.ToString("F2")!</strong>
+                    </div>
+                }
+
+                <div class="alert alert-info">
+                    <small>
+                        <strong>ℹ️ Informação:</strong><br>
+                        @if (Model.Subtotal >= 50)
+                        {
+                            <text>✅ Envio grátis aplicado!</text>
+                        }
+                        else
+                        {
+                            <text>Envio grátis para encomendas acima de €50.</text>
+                        }
+                        <br>
+                        Entrega em 3-5 dias úteis.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,707 @@
+@page
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+@model MotoPartsShop.Pages_Pecas.IndexModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Catálogo de Peças";
+}
+
+<div class="container-fluid px-4 py-4">
+    
+   <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold mb-2">🏍️ Catálogo de Peças</h1>
+            <p class="text-muted">Encontra as melhores peças para a tua mota</p>
+        </div>
+        <div>
+            @if (User.IsInRole("Admin") || User.IsInRole("Gestor"))
+            {
+                <div class="btn-group">
+                    <a asp-page="ExportarCatalogo" class="btn btn-success btn-lg">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Catálogo
+                    </a>
+                    <a asp-page="Create" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle"></i> Adicionar Peça
+                    </a>
+                </div>
+            }
+        </div>  
+    </div>
+
+    <!-- FILTROS -->
+    <form method="get" class="mb-4">
+        <div class="card filter-card">
+            <div class="card-header bg-gradient-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtros de Pesquisa</h5>
+            </div>
+            <div class="card-body">
+                <!-- PESQUISA -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="search-box-large">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" name="SearchString" value="@Model.SearchString" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="🔍 Pesquisar por nome, referência ou descrição...">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FILTROS -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-tag-fill"></i> Categoria:</label>
+                        <select name="CategoriaId" class="form-select" asp-items="Model.Categorias">
+                            <option value="">Todas as Categorias</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-building"></i> Marca:</label>
+                        <select name="MarcaId" class="form-select" asp-items="Model.Marcas">
+                            <option value="">Todas as Marcas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-motorcycle"></i> Modelo:</label>
+                        <select name="ModeloId" class="form-select" asp-items="Model.Modelos">
+                            <option value="">Todos os Modelos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-currency-euro"></i> Preço Mínimo:</label>
+                        <input type="number" name="PrecoMin" value="@Model.PrecoMin" 
+                               class="form-control" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-currency-euro"></i> Preço Máximo:</label>
+                        <input type="number" name="PrecoMax" value="@Model.PrecoMax" 
+                               class="form-control" step="0.01" placeholder="999.99">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input type="checkbox" name="ApenasEmStock" value="true" 
+                                   class="form-check-input" id="stockCheck" 
+                                   @(Model.ApenasEmStock == true ? "checked" : "")>
+                            <label class="form-check-label" for="stockCheck">
+                                <i class="bi bi-box-seam"></i> Apenas em Stock
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-search"></i> Aplicar Filtros
+                        </button>
+                        <a asp-page="./Index" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-arrow-clockwise"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- RESULTADOS -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <span class="badge bg-info text-dark fs-6">
+                <i class="bi bi-box-seam"></i> <strong>@Model.Peca.TotalItemCount</strong> peça(s) encontrada(s)
+            </span>
+        </div>
+        <div class="view-toggle">
+            <button class="btn btn-outline-primary active" id="gridViewBtn">
+                <i class="bi bi-grid-3x3-gap-fill"></i> Cards
+            </button>
+            <button class="btn btn-outline-primary" id="listViewBtn">
+                <i class="bi bi-list-ul"></i> Lista
+            </button>
+        </div>
+    </div>
+
+    @if (Model.Peca.Any())
+    {
+        <!-- VISTA EM CARDS (PADRÃO) -->
+        <div id="gridView" class="row g-4">
+            @foreach (var item in Model.Peca)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product-card">
+                        <!-- ✅ BADGES NOS CARDS (MANTIDAS) -->
+                        <div class="product-badges">
+                            @if (item.PecaOriginal)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="bi bi-patch-check-fill"></i> Original
+                                </span>
+                            }
+                            @if (item.Stock == 0)
+                            {
+                                <span class="badge bg-danger">Esgotado</span>
+                            }
+                            else if (item.Stock < 10)
+                            {
+                                <span class="badge bg-warning text-dark">Stock Baixo</span>
+                            }
+                        </div>
+
+                        <!-- IMAGEM -->
+                        <div class="product-image-wrapper">
+                            <img src="@item.ImagemUrl" alt="@item.Nome" class="product-image">
+                            
+                            <!-- OVERLAY COM BOTÕES -->
+                            <div class="product-overlay">
+                                <div class="product-actions">
+                                    <!-- BOTÃO VER DETALHES -->
+                                    <a asp-page="./Details" asp-route-id="@item.Id" 
+                                       class="btn btn-light btn-sm rounded-circle" 
+                                       title="Ver Detalhes">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    
+                                    <!-- BOTÃO FAVORITO (FUNCIONAL) -->
+                                    <form method="post" asp-page-handler="ToggleFavorito" class="d-inline">
+                                        <input type="hidden" name="pecaId" value="@item.Id" />
+                                        @if (Model.FavoritosIds.Contains(item.Id))
+                                        {
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-circle" 
+                                                    title="Remover dos Favoritos">
+                                                <i class="bi bi-heart-fill"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-light btn-sm rounded-circle" 
+                                                    title="Adicionar aos Favoritos">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                        }
+                                    </form>
+                                    
+                                    <!-- BOTÃO COMPARAR -->
+                                    <form method="post" asp-page="/Comparador" asp-page-handler="Adicionar" class="d-inline">
+                                        <input type="hidden" name="pecaId" value="@item.Id" />
+                                        <button type="submit" class="btn btn-light btn-sm rounded-circle" 
+                                                title="Adicionar ao Comparador">
+                                            <i class="bi bi-arrow-left-right"></i>
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- BOTÃO EDITAR (SÓ ADMIN/GESTOR) -->
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Gestor"))
+                                    {
+                                        <a asp-page="./Edit" asp-route-id="@item.Id" 
+                                           class="btn btn-light btn-sm rounded-circle" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="product-info">
+                            <div class="product-category">
+                                <i class="bi bi-tag-fill"></i> @item.Categoria?.Nome
+                            </div>
+                            <h5 class="product-title">@item.Nome</h5>
+                            <div class="product-ref">
+                                <small class="text-muted">Ref: @item.Referencia</small>
+                            </div>
+                            
+                            <!-- MARCA E MODELO -->
+                            <div class="product-meta">
+                                <span><i class="bi bi-building"></i> @item.Modelo?.Marca?.Nome</span>
+                                <span><i class="bi bi-motorcycle"></i> @item.Modelo?.Nome</span>
+                            </div>
+
+                            <!-- PREÇO E STOCK -->
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    €@item.Preco
+                                </div>
+                                <div class="product-stock">
+                                    @if (item.Stock > 0)
+                                    {
+                                        <span class="badge bg-success-subtle text-success">
+                                            <i class="bi bi-check-circle-fill"></i> @item.Stock
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger">
+                                            <i class="bi bi-x-circle-fill"></i> 0
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- BOTÃO CARRINHO -->
+                            <form method="post" asp-page="/Carrinho" asp-page-handler="Adicionar" class="mt-3">
+                                <input type="hidden" name="pecaId" value="@item.Id" />
+                                <input type="hidden" name="nome" value="@item.Nome" />
+                                <input type="hidden" name="preco" value="@item.Preco" />
+                                <input type="hidden" name="imagemUrl" value="@item.ImagemUrl" />
+                                <button type="submit" class="btn btn-primary w-100" 
+                                        @(item.Stock == 0 ? "disabled" : "")>
+                                    <i class="bi bi-cart-plus-fill"></i> Adicionar ao Carrinho
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- VISTA EM LISTA (OCULTA) -->
+        <div id="listView" class="d-none">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Imagem</th>
+                            <th>Nome</th>
+                            <th>Referência</th>
+                            <th>Categoria</th>
+                            <th>Marca/Modelo</th>
+                            <th>Preço</th>
+                            <th>Stock</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Peca)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@item.ImagemUrl" alt="@item.Nome" 
+                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                </td>
+                                <td><strong>@item.Nome</strong></td>
+                                <td><span class="badge bg-secondary">@item.Referencia</span></td>
+                                <td>@item.Categoria?.Nome</td>
+                                <td>
+                                    <small>
+                                        @item.Modelo?.Marca?.Nome<br>
+                                        @item.Modelo?.Nome
+                                    </small>
+                                </td>
+                                <td><strong class="text-success">€@item.Preco</strong></td>
+                                <td>
+                                    @if (item.Stock > 0)
+                                    {
+                                        <span class="badge bg-success">@item.Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">0</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-page="./Details" asp-route-id="@item.Id" 
+                                           class="btn btn-info btn-sm" title="Ver">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        
+                                        <!-- BOTÃO FAVORITO NA LISTA -->
+                                        <form method="post" asp-page-handler="ToggleFavorito" class="d-inline">
+                                            <input type="hidden" name="pecaId" value="@item.Id" />
+                                            @if (Model.FavoritosIds.Contains(item.Id))
+                                            {
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Remover dos Favoritos">
+                                                    <i class="bi bi-heart-fill"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Adicionar aos Favoritos">
+                                                    <i class="bi bi-heart"></i>
+                                                </button>
+                                            }
+                                        </form>
+                                        
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Gestor"))
+                                        {
+                                            <a asp-page="./Edit" asp-route-id="@item.Id" 
+                                               class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a asp-page="./Delete" asp-route-id="@item.Id" 
+                                               class="btn btn-danger btn-sm" title="Apagar">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+       <!-- PAGINAÇÃO -->
+        @if (Model.Peca.PageCount > 1)
+        {
+            <div class="row mt-5 mb-4">
+                <div class="col-12">
+                    <nav aria-label="Paginação">
+                        <ul class="pagination justify-content-center pagination-modern">
+                            <!-- PRIMEIRA PÁGINA -->
+                            @if (Model.Peca.PageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-page="./Index" asp-route-page="1"
+                                       asp-route-SearchString="@Model.SearchString"
+                                       asp-route-CategoriaId="@Model.CategoriaId"
+                                       asp-route-MarcaId="@Model.MarcaId"
+                                       asp-route-ModeloId="@Model.ModeloId"
+                                       asp-route-ApenasEmStock="@Model.ApenasEmStock"
+                                       asp-route-PrecoMin="@Model.PrecoMin"
+                                       asp-route-PrecoMax="@Model.PrecoMax">
+                                        <i class="bi bi-chevron-bar-left"></i>
+                                    </a>
+                                </li>
+                            }
+                            
+                            <!-- ANTERIOR -->
+                            @if (Model.Peca.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-page="./Index"
+                                       asp-route-page="@(Model.Peca.PageNumber - 1)"
+                                       asp-route-SearchString="@Model.SearchString"
+                                       asp-route-CategoriaId="@Model.CategoriaId"
+                                       asp-route-MarcaId="@Model.MarcaId"
+                                       asp-route-ModeloId="@Model.ModeloId"
+                                       asp-route-ApenasEmStock="@Model.ApenasEmStock"
+                                       asp-route-PrecoMin="@Model.PrecoMin"
+                                       asp-route-PrecoMax="@Model.PrecoMax">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+                            
+                            <!-- PÁGINAS (máximo 7) -->
+                            @{
+                                int startPage = Math.Max(1, Model.Peca.PageNumber - 3);
+                                int endPage = Math.Min(Model.Peca.PageCount, Model.Peca.PageNumber + 3);
+                            }
+                            
+                            @if (startPage > 1)
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            }
+                            
+                            @for (int i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item @(i == Model.Peca.PageNumber ? "active" : "")">
+                                    <a class="page-link" asp-page="./Index"
+                                       asp-route-page="@i"
+                                       asp-route-SearchString="@Model.SearchString"
+                                       asp-route-CategoriaId="@Model.CategoriaId"
+                                       asp-route-MarcaId="@Model.MarcaId"
+                                       asp-route-ModeloId="@Model.ModeloId"
+                                       asp-route-ApenasEmStock="@Model.ApenasEmStock"
+                                       asp-route-PrecoMin="@Model.PrecoMin"
+                                       asp-route-PrecoMax="@Model.PrecoMax">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+                            
+                            @if (endPage < Model.Peca.PageCount)
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            }
+                            
+                            <!-- PRÓXIMA -->
+                            @if (Model.Peca.HasNextPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-page="./Index"
+                                       asp-route-page="@(Model.Peca.PageNumber + 1)"
+                                       asp-route-SearchString="@Model.SearchString"
+                                       asp-route-CategoriaId="@Model.CategoriaId"
+                                       asp-route-MarcaId="@Model.MarcaId"
+                                       asp-route-ModeloId="@Model.ModeloId"
+                                       asp-route-ApenasEmStock="@Model.ApenasEmStock"
+                                       asp-route-PrecoMin="@Model.PrecoMin"
+                                       asp-route-PrecoMax="@Model.PrecoMax">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                            
+                            <!-- ÚLTIMA PÁGINA -->
+                            @if (Model.Peca.PageNumber < Model.Peca.PageCount)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-page="./Index" asp-route-page="@Model.Peca.PageCount"
+                                       asp-route-SearchString="@Model.SearchString"
+                                       asp-route-CategoriaId="@Model.CategoriaId"
+                                       asp-route-MarcaId="@Model.MarcaId"
+                                       asp-route-ModeloId="@Model.ModeloId"
+                                       asp-route-ApenasEmStock="@Model.ApenasEmStock"
+                                       asp-route-PrecoMin="@Model.PrecoMin"
+                                       asp-route-PrecoMax="@Model.PrecoMax">
+                                        <i class="bi bi-chevron-bar-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                    
+                    <!-- INFO PAGINAÇÃO -->
+                    <div class="text-center mt-3">
+                        <span class="badge bg-primary-subtle text-primary fs-6">
+                            Página @Model.Peca.PageNumber de @Model.Peca.PageCount
+                            <span class="mx-2">|</span>
+                            Total: @Model.Peca.TotalItemCount peças
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <!-- MENSAGEM SEM RESULTADOS -->
+        <div class="alert alert-warning text-center py-5" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem;"></i>
+            <h4 class="alert-heading mt-3">Nenhuma peça encontrada!</h4>
+            <p>Não existem peças que correspondam aos critérios de pesquisa.</p>
+            <hr>
+            <a asp-page="./Index" class="btn btn-primary">
+                <i class="bi bi-arrow-clockwise"></i> Limpar Filtros
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    /* ❌ ESCONDER BADGES NA NAVBAR (só nesta página) */
+    .navbar-nav .badge {
+        display: none !important;
+    }
+    
+    /* FILTROS */
+    .filter-card {
+        border: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .search-box-large {
+        position: relative;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+    
+    .search-box-large input {
+        padding-left: 60px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    
+    .search-box-large input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+    
+    /* VIEW TOGGLE */
+    .view-toggle .btn {
+        border-radius: 8px;
+    }
+    
+    .view-toggle .btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    /* PRODUCT CARDS */
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    /* ✅ BADGES NOS CARDS (MANTIDAS) */
+    .product-badges {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .product-badges .badge {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+        display: inline-block !important;
+    }
+    
+    /* IMAGE */
+    .product-image-wrapper {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+        background: #f5f5f5;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.5s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.1);
+    }
+    
+    /* OVERLAY */
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%);
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+    
+    .product-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .product-actions .btn, 
+    .product-actions form button {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .product-actions .btn:hover,
+    .product-actions form button:hover {
+        transform: translateY(-5px);
+        background: #FF6B35 !important;
+        color: white !important;
+    }
+    
+    /* INFO */
+    .product-info {
+        padding: 1.25rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-category {
+        color: #667eea;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1A1A2E;
+        margin-bottom: 0.5rem;
+        min-height: 2.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .product-ref {
+        margin-bottom: 0.75rem;
+    }
+    
+    .product-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .product-price {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #06D6A0;
+    }
+    
+    .product-stock {
+        font-size: 1rem;
+    }
+    
+    /* PAGINAÇÃO MODERNA */
+    .pagination-modern .page-link {
+        border: none;
+        margin: 0 3px;
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        color: #667eea

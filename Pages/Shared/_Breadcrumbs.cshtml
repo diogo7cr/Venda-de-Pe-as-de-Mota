@@ -1,0 +1,136 @@
+@using Microsoft.AspNetCore.Mvc.RazorPages
+
+@{
+    var page = ViewContext.RouteData.Values["page"]?.ToString()?.TrimStart('/');
+    
+    // Não mostrar breadcrumbs nestas páginas
+    var paginasSemBreadcrumbs = new[] { 
+        "Index",           // Homepage
+        "",                // Homepage vazia
+        null               // Homepage null
+    };
+    
+    if (paginasSemBreadcrumbs.Contains(page))
+    {
+        return;
+    }
+    
+    // Construir breadcrumbs baseado na página atual
+    var breadcrumbs = new List<(string Text, string? Link)>();
+    breadcrumbs.Add(("Home", "/"));
+    
+    if (!string.IsNullOrEmpty(page))
+    {
+        var parts = page.Split('/');
+        string currentPath = "";
+        
+        for (int i = 0; i < parts.Length; i++)
+        {
+            var part = parts[i];
+            currentPath += "/" + part;
+            
+            string displayName = part switch
+            {
+                "Pecas" => i == parts.Length - 1 ? "Catálogo de Peças" : "Peças",
+                "Create" => "Adicionar",
+                "Edit" => "Editar",
+                "Delete" => "Eliminar",
+                "Details" => "Detalhes",
+                "Dashboard" => "Dashboard",
+                "Categorias" => "Categorias",
+                "Marcas" => "Marcas",
+                "Modelos" => "Modelos",
+                "Carrinho" => "Carrinho",
+                "Checkout" => "Finalizar Compra",
+                "MeusPedidos" => "Meus Pedidos",
+                "MeusFavoritos" => "Favoritos",
+                "Admin" => "Administração",
+                "Cupoes" => "Cupões",
+                "Users" => "Utilizadores",
+                "Pedidos" => "Pedidos",
+                _ => part
+            };
+            
+            // Último item (página atual) não tem link
+            if (i == parts.Length - 1)
+            {
+                breadcrumbs.Add((displayName, null));
+            }
+            else
+            {
+                breadcrumbs.Add((displayName, currentPath));
+            }
+        }
+    }
+}
+
+@if (breadcrumbs.Count > 1)
+{
+    <nav aria-label="breadcrumb" class="mb-3">
+        <div class="breadcrumb-container">
+            <ol class="breadcrumb mb-0">
+                @for (int i = 0; i < breadcrumbs.Count; i++)
+                {
+                    var (text, link) = breadcrumbs[i];
+                    
+                    <li class="breadcrumb-item @(link == null ? "active" : "")">
+                        @if (link != null)
+                        {
+                            <a href="@link">
+                                @if (i == 0)
+                                {
+                                    <i class="bi bi-house-fill"></i>
+                                }
+                                @text
+                            </a>
+                        }
+                        else
+                        {
+                            <strong>@text</strong>
+                        }
+                    </li>
+                }
+            </ol>
+        </div>
+    </nav>
+}
+
+<style>
+.breadcrumb-container {
+    background: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.breadcrumb {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb-item {
+    font-size: 0.95rem;
+}
+
+.breadcrumb-item a {
+    color: #667eea;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #ccc;
+    font-size: 1.2rem;
+}
+</style>

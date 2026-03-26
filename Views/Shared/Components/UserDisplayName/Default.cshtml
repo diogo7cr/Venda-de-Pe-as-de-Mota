@@ -1,0 +1,28 @@
+@model (string displayName, string photoUrl)
+
+@if (!string.IsNullOrEmpty(Model.displayName))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            @if (!string.IsNullOrEmpty(Model.photoUrl))
+            {
+                <img src="@Model.photoUrl?v=@DateTime.Now.Ticks" alt="Foto" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+            }
+            else
+            {
+                <span class="me-2">👤</span>
+            }
+            <span class="d-none d-md-inline">Olá, @Model.displayName!</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" href="/Profile">👤 Meu Perfil</a></li>
+            <li><a class="dropdown-item" href="/Identity/Account/Manage">⚙️ Definições</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form method="post" action="/Identity/Account/Logout">
+                    <button type="submit" class="dropdown-item">🚪 Logout</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}

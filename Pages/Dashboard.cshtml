@@ -1,0 +1,648 @@
+@page
+@model MotoPartsShop.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">📊 Dashboard Administrativo</h1>
+            <p class="text-muted">Visão geral do sistema e estatísticas de vendas</p>
+        </div>
+        <div>
+            <span class="badge bg-success fs-6">
+                <i class="bi bi-calendar-check"></i> @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </span>
+        </div>
+    </div>
+<!-- CARDS PRINCIPAIS -->
+<div class="row g-4 mb-5">
+    <!-- RECEITA TOTAL -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card bg-gradient-success text-white h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="dashboard-icon">
+                        <i class="bi bi-currency-euro"></i>
+                    </div>
+                </div>
+                <h6 class="card-subtitle mb-2 opacity-75">💰 Receita Total</h6>
+                <h2 class="display-6 fw-bold mb-0 text-truncate">€@Model.ReceitaTotal.ToString("N2")</h2>
+                <p class="small mb-0 opacity-75 mt-2">
+                    @Model.TotalPedidos pedidos no total
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RECEITA DO MÊS -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card bg-gradient-primary text-white h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="dashboard-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                </div>
+                <h6 class="card-subtitle mb-2 opacity-75">📈 Este Mês</h6>
+                <h2 class="display-6 fw-bold mb-0 text-truncate">€@Model.ReceitaMesAtual.ToString("N2")</h2>
+                <p class="small mb-0 mt-2">
+                    @{
+                        var crescimento = Model.ReceitaMesAnterior > 0 
+                            ? ((Model.ReceitaMesAtual - Model.ReceitaMesAnterior) / Model.ReceitaMesAnterior * 100) 
+                            : 0;
+                    }
+                    @if (crescimento >= 0)
+                    {
+                        <span class="badge bg-light text-success">
+                            <i class="bi bi-arrow-up"></i> +@crescimento.ToString("F1")%
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-light text-danger">
+                            <i class="bi bi-arrow-down"></i> @crescimento.ToString("F1")%
+                        </span>
+                    }
+                    <span class="opacity-75 ms-2">vs mês anterior</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PEDIDOS PENDENTES -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card bg-gradient-warning text-white h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="dashboard-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+                <h6 class="card-subtitle mb-2 opacity-75">📦 Pedidos Pendentes</h6>
+                <h2 class="display-6 fw-bold mb-0">@Model.PedidosPendentes</h2>
+                <p class="small mb-0 opacity-75 mt-2">
+                    @Model.PedidosEntregues entregues
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- VALOR EM STOCK -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card bg-gradient-info text-white h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="dashboard-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+                <h6 class="card-subtitle mb-2 opacity-75">🏪 Valor em Stock</h6>
+                <h2 class="display-6 fw-bold mb-0 text-truncate">€@Model.ValorTotalStock.ToString("N2")</h2>
+                <p class="small mb-0 opacity-75 mt-2">
+                    @Model.PecasEmStock peças disponíveis
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- GRÁFICOS -->
+    <div class="row mb-4">
+        <!-- VENDAS POR MÊS -->
+        <div class="col-md-8">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Evolução de Vendas (Últimos 6 Meses)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="vendasMesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- PEDIDOS POR ESTADO -->
+        <div class="col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Pedidos por Estado</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="pedidosEstadoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VENDAS POR CATEGORIA -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Vendas por Categoria</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="vendasCategoriaChart" height="60"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- PEDIDOS RECENTES -->
+        <div class="col-md-6">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Pedidos Recentes</h5>
+                    <a asp-page="/Admin/Pedidos" class="btn btn-sm btn-primary">Ver Todos</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.PedidosRecentes.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cliente</th>
+                                        <th>Data</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pedido in Model.PedidosRecentes)
+                                    {
+                                        <tr>
+                                            <td><strong>#@pedido.Id</strong></td>
+                                            <td>@pedido.NomeCliente</td>
+                                            <td><small>@pedido.DataPedido.ToString("dd/MM/yyyy")</small></td>
+                                            <td><strong class="text-success">€@pedido.Total</strong></td>
+                                            <td>
+                                                @switch (pedido.Estado)
+                                                {
+                                                    case "Pendente":
+                                                        <span class="badge bg-warning text-dark">Pendente</span>
+                                                        break;
+                                                    case "Processando":
+                                                        <span class="badge bg-info">Processando</span>
+                                                        break;
+                                                    case "Enviado":
+                                                        <span class="badge bg-primary">Enviado</span>
+                                                        break;
+                                                    case "Entregue":
+                                                        <span class="badge bg-success">Entregue</span>
+                                                        break;
+                                                    case "Cancelado":
+                                                        <span class="badge bg-danger">Cancelado</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Nenhum pedido encontrado</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- PEÇAS MAIS VENDIDAS -->
+        <div class="col-md-6">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-trophy"></i> Peças Mais Vendidas</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PecasMaisVendidas.Any())
+                    {
+                        @foreach (var peca in Model.PecasMaisVendidas)
+                        {
+                            <div class="top-product-item">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <strong>@peca.Nome</strong><br>
+                                        <small class="text-muted">@peca.QuantidadeVendida unidades vendidas</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong class="text-success">€@peca.ReceitaTotal.ToString("N2")</strong>
+                                    </div>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    @{
+                                        var maxVendas = Model.PecasMaisVendidas.Max(p => p.QuantidadeVendida);
+                                        var percentagem = maxVendas > 0 ? (peca.QuantidadeVendida * 100.0 / maxVendas) : 0;
+                                    }
+                                    <div class="progress-bar bg-success" style="width: @percentagem%"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-bag-x" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Ainda sem vendas</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALERTAS E AÇÕES -->
+    <div class="row mt-4">
+        <!-- STOCK BAIXO -->
+        <div class="col-md-6">
+            <div class="card dashboard-card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Alertas de Stock Baixo</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PecasStockBaixo.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var peca in Model.PecasStockBaixo)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@peca.Nome</strong><br>
+                                        <small class="text-muted">Ref: @peca.Referencia</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-warning text-dark rounded-pill">@peca.Stock unidades</span>
+                                        <a asp-page="/Pecas/Edit" asp-route-id="@peca.Id" class="btn btn-sm btn-outline-primary ms-2">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted">
+                            <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Todos os produtos com stock adequado! 👍</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP CATEGORIAS -->
+        <div class="col-md-6">
+            <div class="card dashboard-card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-tags"></i> Top Categorias</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopCategorias.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var cat in Model.TopCategorias)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>@cat.Nome</strong>
+                                    <span class="badge bg-info rounded-pill">@cat.TotalPecas peças</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Sem dados disponíveis.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AÇÕES RÁPIDAS -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a asp-page="/Pecas/Create" class="action-card">
+                                <i class="bi bi-plus-circle"></i>
+                                <span>Adicionar Peça</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+    <a asp-page="/Admin/Cupoes/Index" class="action-card" 
+       style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);">
+        <i class="bi bi-ticket-perforated"></i>
+        <span>Gerir Cupões</span>
+    </a>
+</div>
+                        <div class="col-md-3">
+                            <a asp-page="/Admin/Pedidos" class="action-card">
+                                <i class="bi bi-box-seam"></i>
+                                <span>Gerir Pedidos</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-page="/Admin/ExportarRelatorio" class="action-card" style="background: linear-gradient(135deg, #06D6A0 0%, #05A67D 100%);">
+                                <i class="bi bi-file-earmark-excel"></i>
+                                <span>Exportar Relatório</span>
+                            </a>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="col-md-3">
+                                <a asp-page="/Admin/Users" class="action-card">
+                                    <i class="bi bi-people"></i>
+                                    <span>Utilizadores</span>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* STAT CARDS */
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.card-receita { border-color: #06D6A0; }
+.card-mes-atual { border-color: #667eea; }
+.card-pedidos { border-color: #FF6B35; }
+.card-stock { border-color: #FFC107; }
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.card-receita .stat-icon { background: rgba(6, 214, 160, 0.1); color: #06D6A0; }
+.card-mes-atual .stat-icon { background: rgba(102, 126, 234, 0.1); color: #667eea; }
+.card-pedidos .stat-icon { background: rgba(255, 107, 53, 0.1); color: #FF6B35; }
+.card-stock .stat-icon { background: rgba(255, 193, 7, 0.1); color: #FFC107; }
+
+.stat-content h6 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.stat-content h2 {
+    margin: 0.25rem 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-card {
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1rem 1.5rem;
+}
+
+/* TOP PRODUCTS */
+.top-product-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.top-product-item:last-child {
+    border-bottom: none;
+}
+
+/* ACTION CARDS */
+.action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+    color: white;
+}
+
+.action-card i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.action-card span {
+    font-weight: 600;
+}
+
+/* DARK MODE */
+body.dark-mode .stat-card,
+body.dark-mode .dashboard-card {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+/* DASHBOARD CARDS MODERNOS */
+.dashboard-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+}
+
+.dashboard-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #06D6A0 0%, #06A082 100%);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #F7931E 0%, #FF6B35 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Garantir que os números grandes fiquem visíveis */
+.dashboard-card h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem) !important;
+    word-break: break-word;
+}
+
+/* RESPONSIVO */
+@@media (max-width: 768px) {
+    .dashboard-card h2 {
+        font-size: 1.5rem !important;
+    }
+}
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        const vendasMesData = @Html.Raw(Model.VendasPorMesJson);
+        const vendasCategoriaData = @Html.Raw(Model.VendasPorCategoriaJson);
+        const pedidosEstadoData = @Html.Raw(Model.PedidosPorEstadoJson);
+
+        // GRÁFICO DE VENDAS POR MÊS
+        const ctxVendasMes = document.getElementById('vendasMesChart').getContext('2d');
+        new Chart(ctxVendasMes, {
+            type: 'line',
+            data: {
+                labels: vendasMesData.map(v => v.mes),
+                datasets: [{
+                    label: 'Receita (€)',
+                    data: vendasMesData.map(v => v.receita),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '€' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // GRÁFICO DE PEDIDOS POR ESTADO
+        const ctxPedidosEstado = document.getElementById('pedidosEstadoChart').getContext('2d');
+        new Chart(ctxPedidosEstado, {
+            type: 'doughnut',
+            data: {
+                labels: pedidosEstadoData.map(p => p.estado),
+                datasets: [{
+                    data: pedidosEstadoData.map(p => p.quantidade),
+                    backgroundColor: ['#FFC107', '#00A8E8', '#667eea', '#06D6A0', '#DC3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // GRÁFICO DE VENDAS POR CATEGORIA
+        const ctxVendasCategoria = document.getElementById('vendasCategoriaChart').getContext('2d');
+        new Chart(ctxVendasCategoria, {
+            type: 'bar',
+            data: {
+                labels: vendasCategoriaData.map(c => c.categoria),
+                datasets: [{
+                    label: 'Receita (€)',
+                    data: vendasCategoriaData.map(c => c.total),
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(255, 107, 53, 0.8)',
+                        'rgba(6, 214, 160, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '€' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

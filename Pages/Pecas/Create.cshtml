@@ -1,0 +1,93 @@
+@page
+@model MotoPartsShop.Pages_Pecas.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Peca</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.Nome" class="control-label"></label>
+                <input asp-for="Peca.Nome" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Peca.Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.Referencia" class="control-label"></label>
+                <input asp-for="Peca.Referencia" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Peca.Referencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Peca.Descricao" class="control-label"></label>
+                <input asp-for="Peca.Descricao" class="form-control" />
+                <span asp-validation-for="Peca.Descricao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.Preco" class="control-label"></label>
+                <input asp-for="Peca.Preco" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Peca.Preco" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.Stock" class="control-label"></label>
+                <input asp-for="Peca.Stock" class="form-control" aria-required="true"/>
+                <span asp-validation-for="Peca.Stock" class="text-danger"></span>
+            </div>
+            
+            <!-- CAMPO DE UPLOAD DE IMAGEM -->
+            <div class="form-group">
+                <label asp-for="ImagemUpload" class="control-label">🖼️ Upload de Imagem</label>
+                <input type="file" asp-for="ImagemUpload" class="form-control" accept="image/*" />
+                <small class="form-text text-muted">Formatos aceites: JPG, PNG, GIF (máx. 5MB)</small>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Peca.ImagemUrl" class="control-label">Ou URL da Imagem</label>
+                <input asp-for="Peca.ImagemUrl" class="form-control" placeholder="https://exemplo.com/imagem.jpg" />
+                <span asp-validation-for="Peca.ImagemUrl" class="text-danger"></span>
+                <small class="form-text text-muted">Se fizeres upload, este campo é ignorado</small>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Peca.Peso" class="control-label"></label>
+                <input asp-for="Peca.Peso" class="form-control" />
+                <span asp-validation-for="Peca.Peso" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Peca.PecaOriginal" /> @Html.DisplayNameFor(model => model.Peca.PecaOriginal)
+                </label>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.CategoriaId" class="control-label"></label>
+                <select asp-for="Peca.CategoriaId" class ="form-control" asp-items="ViewBag.CategoriaId" aria-required="true"></select>
+            </div>
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Peca.ModeloId" class="control-label"></label>
+                <select asp-for="Peca.ModeloId" class ="form-control" asp-items="ViewBag.ModeloId" aria-required="true"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

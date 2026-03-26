@@ -1,0 +1,255 @@
+is_global = true
+build_property.TargetFramework = net10.0
+build_property.TargetFramework = net10.0
+build_property.TargetPlatformMinVersion = 
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.RootNamespace = MotoPartsShop
+build_property.RootNamespace = MotoPartsShop
+build_property.ProjectDir = C:\Users\Lenovo\Documents\Programação Web - Servidor II\MotoPartsShop\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\Lenovo\Documents\Programação Web - Servidor II\MotoPartsShop
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 10.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZWdpc3RlckNvbmZpcm1hdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/Account/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxfVmlld0ltcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZhbGlkYXRpb25TY3JpcHRzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Areas/Identity/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Admin/Cupoes/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ3Vwb2VzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Admin/Cupoes/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ3Vwb2VzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Admin/ExportarRelatorio.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cRXhwb3J0YXJSZWxhdG9yaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Admin/Pedidos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cUGVkaWRvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Admin/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cVXNlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Carrinho.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2FycmluaG8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Categorias/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Categorias/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Categorias/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Categorias/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Categorias/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcmlhc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Checkout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2hlY2tvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Comparador.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcGFyYWRvci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Marcas/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFyY2FzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Marcas/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFyY2FzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Marcas/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFyY2FzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Marcas/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFyY2FzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Marcas/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFyY2FzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/MeusFavoritos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWV1c0Zhdm9yaXRvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/MeusPedidos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWV1c1BlZGlkb3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Modelos/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kZWxvc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Modelos/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kZWxvc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Modelos/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kZWxvc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Modelos/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kZWxvc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Modelos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kZWxvc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/NotificarStock.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90aWZpY2FyU3RvY2suY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Pecas/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVjYXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Pecas/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVjYXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Pecas/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVjYXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Pecas/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVjYXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Pecas/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVjYXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Shared/_Breadcrumbs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9CcmVhZGNydW1icy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Shared/_WelcomeAlert.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9XZWxjb21lQWxlcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Sucesso.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VjZXNzby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Welcome.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2VsY29tZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Views/Shared/Components/UserDisplayName/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcVXNlckRpc3BsYXlOYW1lXERlZmF1bHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-z1avy3dl2a
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Resources/SharedResources.en.resx]
+build_metadata.AdditionalFiles.TargetPath = Resources\SharedResources.en.resx
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Resources/SharedResources.es.resx]
+build_metadata.AdditionalFiles.TargetPath = Resources\SharedResources.es.resx
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Resources/SharedResources.fr.resx]
+build_metadata.AdditionalFiles.TargetPath = Resources\SharedResources.fr.resx
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Lenovo/Documents/Programação Web - Servidor II/MotoPartsShop/Resources/SharedResources.pt.resx]
+build_metadata.AdditionalFiles.TargetPath = Resources\SharedResources.pt.resx
+build_metadata.AdditionalFiles.CssScope = 

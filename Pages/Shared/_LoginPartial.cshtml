@@ -1,0 +1,83 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using MotoPartsShop.Data
+@using MotoPartsShop.Models
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext DbContext
+
+<ul class="navbar-nav ms-auto">
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    if (user != null)
+    {
+        // Força refresh da base de dados
+        var userProfile = await DbContext.UserProfiles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == user.Id);
+        
+        var displayName = userProfile != null && !string.IsNullOrEmpty(userProfile.PrimeiroNome) 
+            ? $"{userProfile.PrimeiroNome} {userProfile.UltimoNome}" 
+            : user.Email?.Split('@')[0] ?? "User";
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @if (!string.IsNullOrEmpty(userProfile?.FotoPerfilUrl))
+                {
+                    <img src="@userProfile.FotoPerfilUrl?v=@DateTime.Now.Ticks" alt="Foto" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                }
+                else
+                {
+                    <span class="me-2">👤</span>
+                }
+                <span class="d-none d-md-inline">Olá, @displayName!</span>
+                <span class="d-md-none">@displayName</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" asp-page="/Profile">
+                    <i class="bi bi-person-circle"></i> Meu Perfil
+                </a></li>
+                <li><a class="dropdown-item" asp-page="/MeusPedidos">
+                    <i class="bi bi-bag-check-fill"></i> Meus Pedidos
+                </a></li>
+                <li><a class="dropdown-item" asp-page="/MeusFavoritos">
+                    <i class="bi bi-heart-fill"></i> Favoritos
+                </a></li>
+                @if (User.IsInRole("Admin"))
+{
+    <li><a class="dropdown-item" asp-page="/Admin/Users">
+        <i class="bi bi-people-fill"></i> Gestão de Utilizadores
+    </a></li>
+    <li><hr class="dropdown-divider"></li>
+}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/Identity/Account/Manage">
+                    <i class="bi bi-gear-fill"></i> Definições
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+            <i class="bi bi-person-plus"></i> Register
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+        </a>
+    </li>
+}
+</ul>

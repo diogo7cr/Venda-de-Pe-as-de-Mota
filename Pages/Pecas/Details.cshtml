@@ -1,0 +1,304 @@
+@page
+@model MotoPartsShop.Pages_Pecas.DetailsModel
+
+@{
+    ViewData["Title"] = "Detalhes da Peça";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <img src="@Model.Peca.ImagemUrl" class="card-img-top" alt="@Model.Peca.Nome" style="max-height: 400px; object-fit: cover;">
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <h1 class="display-5">@Model.Peca.Nome</h1>
+            <p class="text-muted">Ref: @Model.Peca.Referencia</p>
+            
+            <hr>
+            
+            <div class="mb-3">
+                <span class="badge bg-primary fs-6">@Model.Peca.Categoria?.Nome</span>
+                @if (Model.Peca.PecaOriginal)
+                {
+                    <span class="badge bg-success fs-6">✓ Peça Original</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary fs-6">Compatível</span>
+                }
+            </div>
+            
+            <h2 class="text-success mb-3">€@Model.Peca.Preco</h2>
+            
+          @if (Model.Peca.Stock > 0)
+{
+    <div class="alert alert-info" role="alert">
+        <strong>Stock Disponível:</strong> @Model.Peca.Stock unidades
+    </div>
+}   
+else
+{
+    <div class="alert alert-danger" role="alert">
+        <strong><i class="bi bi-x-circle"></i> Produto Esgotado</strong>
+    </div>
+    
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="mb-3">
+            <a asp-page="/NotificarStock" asp-route-pecaId="@Model.Peca.Id" 
+               class="btn btn-warning w-100">
+                <i class="bi bi-bell-fill"></i> Avisar-me quando disponível
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-info-circle"></i>
+            <a asp-area="Identity" asp-page="/Account/Login">Faz login</a> 
+            para receber notificações quando voltar ao stock.
+        </div>
+    }
+}
+            
+            <p class="lead">@Model.Peca.Descricao</p>
+            
+            <hr>
+            
+            <h5>Especificações Técnicas:</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Marca:</strong> 
+                    <span>@Model.Peca.Modelo?.Marca?.Nome</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Modelo:</strong> 
+                    <span>@Model.Peca.Modelo?.Nome</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Ano:</strong> 
+                    <span>@Model.Peca.Modelo?.AnoLancamento</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Cilindrada:</strong> 
+                    <span>@Model.Peca.Modelo?.Cilindrada cc</span>
+                </li>
+                @if (Model.Peca.Peso.HasValue)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>Peso:</strong> 
+                        <span>@Model.Peca.Peso kg</span>
+                    </li>
+                }
+            </ul>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a asp-page="./Edit" asp-route-id="@Model.Peca.Id" class="btn btn-warning btn-lg">Editar</a>
+                <a asp-page="./Index" class="btn btn-secondary btn-lg">Voltar ao Catálogo</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECÇÃO DE AVALIAÇÕES -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-star-fill"></i> Avaliações dos Clientes
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- RESUMO DAS AVALIAÇÕES -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center border-end">
+                            <div class="rating-summary">
+                                <h1 class="display-3 fw-bold text-warning mb-0">
+                                    @Model.MediaAvaliacoes.ToString("F1")
+                                </h1>
+                                <div class="stars-large mb-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Math.Round(Model.MediaAvaliacoes))
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                                <p class="text-muted">
+                                    Baseado em <strong>@Model.TotalAvaliacoes</strong> avaliações
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                @if (!Model.JaAvaliou)
+                                {
+                                    <!-- FORMULÁRIO DE AVALIAÇÃO -->
+                                    <h5 class="mb-3">Deixa a tua avaliação:</h5>
+                                    <form method="post" asp-page-handler="Avaliar" asp-route-id="@Model.Peca.Id">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Classificação:</label>
+                                            <div class="rating-input">
+                                                @for (int i = 5; i >= 1; i--)
+                                                {
+                                                    <input type="radio" name="Estrelas" value="@i" id="star@(i)" required>
+                                                    <label for="star@(i)">
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </label>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Comentário (opcional):</label>
+                                            <textarea name="Comentario" class="form-control" rows="3" 
+                                                      placeholder="Partilha a tua experiência com esta peça..."></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-send-fill"></i> Enviar Avaliação
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-check-circle-fill"></i> 
+                                        Obrigado! Já avaliaste este produto.
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-info-circle-fill"></i> 
+                                    <a asp-area="Identity" asp-page="/Account/Login">Faz login</a> 
+                                    para deixar a tua avaliação.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- LISTA DE AVALIAÇÕES -->
+                    <h5 class="mb-4">Todas as Avaliações:</h5>
+                    
+                    @if (Model.Avaliacoes.Any())
+                    {
+                        @foreach (var avaliacao in Model.Avaliacoes)
+                        {
+                            <div class="review-card mb-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <strong class="text-primary">
+                                            <i class="bi bi-person-circle"></i> @avaliacao.NomeUtilizador
+                                        </strong>
+                                        @if (avaliacao.Verificado)
+                                        {
+                                            <span class="badge bg-success ms-2">
+                                                <i class="bi bi-patch-check-fill"></i> Compra Verificada
+                                            </span>
+                                        }
+                                    </div>
+                                    <small class="text-muted">
+                                        @avaliacao.DataAvaliacao.ToString("dd/MM/yyyy")
+                                    </small>
+                                </div>
+                                
+                                <div class="stars mb-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= avaliacao.Estrelas)
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                                
+                                @if (!string.IsNullOrEmpty(avaliacao.Comentario))
+                                {
+                                    <p class="mb-0">@avaliacao.Comentario</p>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-chat-dots" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Ainda não há avaliações para este produto.</p>
+                            <p>Sê o primeiro a avaliar!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* RATING SUMMARY */
+    .stars-large i {
+        font-size: 1.5rem;
+    }
+    
+    /* RATING INPUT */
+    .rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+    
+    .rating-input input {
+        display: none;
+    }
+    
+    .rating-input label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+        transition: all 0.2s ease;
+    }
+    
+    .rating-input label:hover,
+    .rating-input label:hover ~ label,
+    .rating-input input:checked ~ label {
+        color: #ffc107;
+    }
+    
+    .rating-input label i {
+        transition: transform 0.2s ease;
+    }
+    
+    .rating-input label:hover i {
+        transform: scale(1.2);
+    }
+    
+    /* REVIEW CARD */
+    .review-card {
+        background: #f8f9fa;
+        padding: 1.25rem;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .stars i {
+        font-size: 1.1rem;
+    }
+</style>

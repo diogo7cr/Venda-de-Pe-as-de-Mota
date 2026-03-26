@@ -1,0 +1,344 @@
+@page
+@model MotoPartsShop.Pages.Admin.UsersModel
+@{
+    ViewData["Title"] = "Gestão de Utilizadores";
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">👥 Gestão de Utilizadores</h1>
+            <p class="text-muted">Gerencie utilizadores e permissões do sistema</p>
+        </div>
+        <a asp-page="/Dashboard" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
+
+    <!-- ALERTAS -->
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- CARDS DE ESTATÍSTICAS -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card border-primary">
+                <div class="card-body text-center">
+                    <div class="stat-icon-large bg-primary mb-2">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.TotalUsers</h3>
+                    <p class="text-muted mb-0">Total Utilizadores</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-danger">
+                <div class="card-body text-center">
+                    <div class="stat-icon-large bg-danger mb-2">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.TotalAdmins</h3>
+                    <p class="text-muted mb-0">Administradores</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-warning">
+                <div class="card-body text-center">
+                    <div class="stat-icon-large bg-warning mb-2">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.TotalGestores</h3>
+                    <p class="text-muted mb-0">Gestores</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card border-success">
+                <div class="card-body text-center">
+                    <div class="stat-icon-large bg-success mb-2">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h3 class="mb-0">@Model.TotalClientes</h3>
+                    <p class="text-muted mb-0">Clientes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTROS E PESQUISA -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">🔍 Pesquisar Utilizador</label>
+                    <input type="text" class="form-control" name="Pesquisa" 
+                           value="@Model.Pesquisa" placeholder="Email ou nome de utilizador...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">🎭 Filtrar por Role</label>
+                    <select class="form-select" name="FiltroRole">
+                        <option value="Todos" selected="@(Model.FiltroRole == "Todos" || string.IsNullOrEmpty(Model.FiltroRole))">Todos</option>
+                        <option value="Admin" selected="@(Model.FiltroRole == "Admin")">Administradores</option>
+                        <option value="Gestor" selected="@(Model.FiltroRole == "Gestor")">Gestores</option>
+                        <option value="Cliente" selected="@(Model.FiltroRole == "Cliente")">Clientes</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- INFO BOX - EXPLICAÇÃO DE ROLES -->
+    <div class="alert alert-info mb-4">
+        <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Informação sobre Roles</h5>
+        <ul class="mb-0">
+            <li><strong>🛡️ Admin:</strong> Acesso total ao sistema, incluindo gestão de utilizadores e roles</li>
+            <li><strong>💼 Gestor:</strong> Acesso ao dashboard, gestão de produtos, categorias e pedidos</li>
+            <li><strong>👤 Cliente:</strong> Acesso apenas à loja e às suas encomendas</li>
+        </ul>
+    </div>
+
+    <!-- TABELA DE UTILIZADORES -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Utilizadores (@Model.TotalUsers)</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Users.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Email</th>
+                                <th>Nome de Utilizador</th>
+                                <th width="120">Estado</th>
+                                <th width="200">Roles</th>
+                                <th width="180" class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var userItem in Model.Users)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@userItem.Email</strong>
+                                    </td>
+                                    <td>@userItem.UserName</td>
+                                    <td>
+                                        @if (userItem.EmailConfirmed)
+                                        {
+                                            <span class="badge bg-success">✅ Confirmado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">⏳ Pendente</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (userItem.Roles.Contains("Admin"))
+                                        {
+                                            <span class="badge bg-danger">🛡️ Admin</span>
+                                        }
+                                        else if (userItem.Roles.Contains("Gestor"))
+                                        {
+                                            <span class="badge bg-warning text-dark">💼 Gestor</span>
+                                        }
+                                        else if (userItem.Roles.Contains("Cliente"))
+                                        {
+                                            <span class="badge bg-success">👤 Cliente</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Sem Role</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-warning" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#roleModal@(userItem.Id.Replace("-", ""))"
+                                                    title="Alterar Role">
+                                                <i class="bi bi-shield"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#eliminarModal@(userItem.Id.Replace("-", ""))"
+                                                    title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- MODAL - ALTERAR ROLE -->
+                                <div class="modal fade" id="roleModal@(userItem.Id.Replace("-", ""))" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" asp-page-handler="AlterarRole">
+                                                <div class="modal-header bg-warning">
+                                                    <h5 class="modal-title">🎭 Alterar Role - @userItem.Email</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="userId" value="@userItem.Id" />
+                                                    
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Role Atual:</label>
+                                                        <p class="fs-5">
+                                                            @if (userItem.Roles.Contains("Admin"))
+                                                            {
+                                                                <span class="badge bg-danger">🛡️ Admin</span>
+                                                            }
+                                                            else if (userItem.Roles.Contains("Gestor"))
+                                                            {
+                                                                <span class="badge bg-warning text-dark">💼 Gestor</span>
+                                                            }
+                                                            else if (userItem.Roles.Contains("Cliente"))
+                                                            {
+                                                                <span class="badge bg-success">👤 Cliente</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-secondary">Sem Role</span>
+                                                            }
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Nova Role:</label>
+                                                        <select class="form-select" name="novaRole" required>
+                                                            <option value="">-- Selecione --</option>
+                                                            <option value="Admin">🛡️ Admin (Acesso Total)</option>
+                                                            <option value="Gestor">💼 Gestor (Dashboard + Gestão)</option>
+                                                            <option value="Cliente">👤 Cliente (Apenas Loja)</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="alert alert-warning">
+                                                        <small>
+                                                            <i class="bi bi-exclamation-triangle"></i>
+                                                            <strong>Atenção:</strong> Alterar a role irá modificar as permissões do utilizador no sistema.
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-warning">
+                                                        <i class="bi bi-check-circle"></i> Alterar Role
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL - ELIMINAR UTILIZADOR -->
+                                <div class="modal fade" id="eliminarModal@(userItem.Id.Replace("-", ""))" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" asp-page-handler="Eliminar">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">⚠️ Confirmar Eliminação</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="userId" value="@userItem.Id" />
+                                                    
+                                                    <p class="mb-3">Tem a certeza que deseja eliminar o utilizador:</p>
+                                                    <div class="alert alert-light">
+                                                        <strong>Email:</strong> @userItem.Email<br>
+                                                        <strong>Role:</strong> 
+                                                        @if (userItem.Roles.Any())
+                                                        {
+                                                            @string.Join(", ", userItem.Roles)
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>Sem role</text>
+                                                        }
+                                                    </div>
+
+                                                    <div class="alert alert-danger">
+                                                        <i class="bi bi-exclamation-triangle"></i>
+                                                        <strong>Atenção:</strong> Esta ação é irreversível e eliminará permanentemente o utilizador!
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash"></i> Sim, Eliminar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-people" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3">Nenhum utilizador encontrado</h4>
+                    <p>Não existem utilizadores com os filtros aplicados.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    border: none;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+}
+
+.stat-icon-large {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+</style>

@@ -1,0 +1,161 @@
+@page
+@model MotoPartsShop.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @Model.StatusMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.FotoPerfilUrl))
+                {
+                    <img src="@Model.FotoPerfilUrl" alt="Foto de Perfil" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                        <span class="text-white" style="font-size: 4rem;">👤</span>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.Input.PrimeiroNome))
+                {
+                    <h4>@Model.Input.PrimeiroNome @Model.Input.UltimoNome</h4>
+                }
+                else
+                {
+                    <h4>Novo Utilizador</h4>
+                }
+                
+                <p class="text-muted">@Model.Email</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Menu</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item active">👤 Perfil</li>
+                    <li class="list-group-item"><a href="/Identity/Account/Manage/ChangePassword" class="text-decoration-none">🔒 Alterar Password</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">✏️ Editar Perfil</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">🔐 Dados de Login</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.Username" class="form-label">Username</label>
+                                <input asp-for="Input.Username" class="form-control" />
+                                <small class="form-text text-muted">Nome de utilizador para login</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.Email" class="form-label">Email</label>
+                                <input asp-for="Input.Email" type="email" class="form-control" />
+                                <small class="form-text text-muted">Email para login e notificações</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">📸 Foto de Perfil</h5>
+                            <div class="mb-3">
+                                <label asp-for="FotoUpload" class="form-label">Carregar Nova Foto</label>
+                                <input type="file" asp-for="FotoUpload" class="form-control" accept="image/*">
+                                <small class="form-text text-muted">Formatos aceites: JPG, PNG, GIF (máx. 5MB)</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">👤 Informações Pessoais</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.PrimeiroNome" class="form-label">Primeiro Nome</label>
+                                <input asp-for="Input.PrimeiroNome" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.UltimoNome" class="form-label">Último Nome</label>
+                                <input asp-for="Input.UltimoNome" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.DataNascimento" class="form-label">Data de Nascimento</label>
+                                <input asp-for="Input.DataNascimento" class="form-control" type="date" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.Telefone" class="form-label">Telefone</label>
+                                <input asp-for="Input.Telefone" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="border-bottom pb-2">📍 Morada</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label asp-for="Input.Morada" class="form-label">Morada</label>
+                                <input asp-for="Input.Morada" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.CodigoPostal" class="form-label">Código Postal</label>
+                                <input asp-for="Input.CodigoPostal" class="form-control" placeholder="0000-000" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Input.Cidade" class="form-label">Cidade</label>
+                                <input asp-for="Input.Cidade" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary btn-lg">💾 Guardar Alterações</button>
+                        <a asp-page="/Index" class="btn btn-secondary btn-lg">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

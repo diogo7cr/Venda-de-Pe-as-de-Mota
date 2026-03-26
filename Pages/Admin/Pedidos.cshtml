@@ -1,0 +1,353 @@
+@page
+@model MotoPartsShop.Pages.Admin.PedidosModel
+@{
+    ViewData["Title"] = "Gestão de Pedidos";
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">📦 Gestão de Pedidos</h1>
+            <p class="text-muted">Visualize e gerencie todos os pedidos da loja</p>
+        </div>
+        <a asp-page="/Dashboard" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+        </a>
+    </div>
+
+    <!-- CARDS DE ESTATÍSTICAS -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card stat-card-small">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon-small bg-primary">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="text-muted mb-1">Total de Pedidos</h6>
+                        <h3 class="mb-0">@Model.TotalPedidos</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card stat-card-small">
+                <div class="card-body d-flex align-items-center">
+                    <div class="stat-icon-small bg-success">
+                        <i class="bi bi-currency-euro"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="text-muted mb-1">Receita Total</h6>
+                        <h3 class="mb-0">€@Model.ReceitaTotal.ToString("N2")</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTROS E PESQUISA -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">🔍 Pesquisar</label>
+                    <input type="text" class="form-control" name="Pesquisa" 
+                           value="@Model.Pesquisa" placeholder="ID, cliente ou email...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">📊 Filtrar por Estado</label>
+                    <select class="form-select" name="FiltroEstado">
+                        <option value="Todos" selected="@(Model.FiltroEstado == "Todos" || string.IsNullOrEmpty(Model.FiltroEstado))">Todos os Estados</option>
+                        <option value="Pendente" selected="@(Model.FiltroEstado == "Pendente")">Pendente</option>
+                        <option value="Processando" selected="@(Model.FiltroEstado == "Processando")">Processando</option>
+                        <option value="Enviado" selected="@(Model.FiltroEstado == "Enviado")">Enviado</option>
+                        <option value="Entregue" selected="@(Model.FiltroEstado == "Entregue")">Entregue</option>
+                        <option value="Cancelado" selected="@(Model.FiltroEstado == "Cancelado")">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABELA DE PEDIDOS -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Pedidos (@Model.TotalPedidos)</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Pedidos.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="80">#ID</th>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Data</th>
+                                <th width="120">Total</th>
+                                <th width="150">Estado</th>
+                                <th width="200" class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pedido in Model.Pedidos)
+                            {
+                                <tr>
+                                    <td><strong class="text-primary">#@pedido.Id</strong></td>
+                                    <td>
+                                        <strong>@pedido.NomeCliente</strong><br>
+                                        <small class="text-muted">@pedido.Telefone</small>
+                                    </td>
+                                    <td><small>@pedido.Email</small></td>
+                                    <td>
+                                        <small>
+                                            @pedido.DataPedido.ToString("dd/MM/yyyy")<br>
+                                            <span class="text-muted">@pedido.DataPedido.ToString("HH:mm")</span>
+                                        </small>
+                                    </td>
+                                    <td><strong class="text-success">€@pedido.Total.ToString("N2")</strong></td>
+                                    <td>
+                                        @switch (pedido.Estado)
+                                        {
+                                            case "Pendente":
+                                                <span class="badge bg-warning text-dark">⏳ Pendente</span>
+                                                break;
+                                            case "Processando":
+                                                <span class="badge bg-info">🔄 Processando</span>
+                                                break;
+                                            case "Enviado":
+                                                <span class="badge bg-primary">📦 Enviado</span>
+                                                break;
+                                            case "Entregue":
+                                                <span class="badge bg-success">✅ Entregue</span>
+                                                break;
+                                            case "Cancelado":
+                                                <span class="badge bg-danger">❌ Cancelado</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-info" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#detalhesModal@(pedido.Id)"
+                                                    title="Ver Detalhes">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-warning" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#estadoModal@(pedido.Id)"
+                                                    title="Alterar Estado">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#eliminarModal@(pedido.Id)"
+                                                    title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- MODAL - DETALHES DO PEDIDO -->
+                                <div class="modal fade" id="detalhesModal@(pedido.Id)" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-info text-white">
+                                                <h5 class="modal-title">📋 Detalhes do Pedido #@pedido.Id</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <h6 class="text-muted">👤 Informações do Cliente</h6>
+                                                        <p class="mb-1"><strong>Nome:</strong> @pedido.NomeCliente</p>
+                                                        <p class="mb-1"><strong>Email:</strong> @pedido.Email</p>
+                                                        <p class="mb-1"><strong>Telefone:</strong> @pedido.Telefone</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h6 class="text-muted">📍 Morada de Entrega</h6>
+                                                        <p class="mb-1">@pedido.Morada</p>
+                                                        <p class="mb-1">@pedido.CodigoPostal @pedido.Cidade</p>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h6 class="text-muted">💰 Resumo Financeiro</h6>
+                                                    <p class="mb-1"><strong>Subtotal:</strong> €@((pedido.Total - 5).ToString("N2"))</p>
+                                                    <p class="mb-1"><strong>Envio:</strong> €5.00</p>
+                                                    <p class="mb-0"><strong class="text-success fs-5">Total: €@pedido.Total.ToString("N2")</strong></p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL - ALTERAR ESTADO -->
+                                <div class="modal fade" id="estadoModal@(pedido.Id)" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" asp-page-handler="AlterarEstado">
+                                                <div class="modal-header bg-warning">
+                                                    <h5 class="modal-title">🔄 Alterar Estado - Pedido #@pedido.Id</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@pedido.Id" />
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Estado Atual:</label>
+                                                        <p class="fs-5">
+                                                            @switch (pedido.Estado)
+                                                            {
+                                                                case "Pendente":
+                                                                    <span class="badge bg-warning text-dark">⏳ Pendente</span>
+                                                                    break;
+                                                                case "Processando":
+                                                                    <span class="badge bg-info">🔄 Processando</span>
+                                                                    break;
+                                                                case "Enviado":
+                                                                    <span class="badge bg-primary">📦 Enviado</span>
+                                                                    break;
+                                                                case "Entregue":
+                                                                    <span class="badge bg-success">✅ Entregue</span>
+                                                                    break;
+                                                                case "Cancelado":
+                                                                    <span class="badge bg-danger">❌ Cancelado</span>
+                                                                    break;
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Novo Estado:</label>
+                                                        <select class="form-select" name="novoEstado" required>
+                                                            <option value="">-- Selecione --</option>
+                                                            <option value="Pendente">⏳ Pendente</option>
+                                                            <option value="Processando">🔄 Processando</option>
+                                                            <option value="Enviado">📦 Enviado</option>
+                                                            <option value="Entregue">✅ Entregue</option>
+                                                            <option value="Cancelado">❌ Cancelado</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-warning">
+                                                        <i class="bi bi-check-circle"></i> Alterar Estado
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL - ELIMINAR PEDIDO -->
+                                <div class="modal fade" id="eliminarModal@(pedido.Id)" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" asp-page-handler="Eliminar">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">⚠️ Confirmar Eliminação</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@pedido.Id" />
+                                                    <p class="mb-3">Tem a certeza que deseja eliminar o pedido <strong>#@pedido.Id</strong>?</p>
+                                                    <div class="alert alert-warning">
+                                                        <i class="bi bi-exclamation-triangle"></i>
+                                                        <strong>Atenção:</strong> Esta ação é irreversível!
+                                                    </div>
+                                                    <p class="mb-0">
+                                                        <strong>Cliente:</strong> @pedido.NomeCliente<br>
+                                                        <strong>Total:</strong> €@pedido.Total.ToString("N2")
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash"></i> Sim, Eliminar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3">Nenhum pedido encontrado</h4>
+                    <p>Não existem pedidos com os filtros aplicados.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card-small {
+    border: none;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card-small:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+}
+
+.stat-icon-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.modal-header {
+    border-radius: 0;
+}
+</style>
+
+@section Scripts {
+    <script>
+        // Auto-fechar modals após submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                setTimeout(() => {
+                    const modals = document.querySelectorAll('.modal.show');
+                    modals.forEach(modal => {
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) bsModal.hide();
+                    });
+                }, 100);
+            });
+        });
+    </script>
+}

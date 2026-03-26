@@ -1,0 +1,37 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using MotoPartsShop.Data
+@using MotoPartsShop.Models
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext DbContext
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    if (user != null)
+    {
+        // Força refresh
+        var userProfile = await DbContext.UserProfiles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == user.Id);
+        
+        var needsProfile = userProfile == null || 
+                          string.IsNullOrEmpty(userProfile.PrimeiroNome) || 
+                          string.IsNullOrEmpty(userProfile.UltimoNome);
+        
+        if (needsProfile)
+        {
+            <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert" id="welcomeAlert">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h5 class="alert-heading mb-2">👋 Bem-vindo ao MotoPartsShop!</h5>
+                        <p class="mb-2">Completa o teu perfil para uma melhor experiência.</p>
+                        <a href="/Profile" class="btn btn-warning btn-sm">✏️ Completar Perfil Agora</a>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    }
+}
