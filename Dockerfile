@@ -2,25 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiar ficheiros .sln e projeto
-COPY *.sln .
-COPY MotoPartsShop/*.csproj ./MotoPartsShop/
-RUN dotnet restore
+# Copiar todo o projeto
+COPY . .
 
-# Copiar todo o código
-COPY MotoPartsShop/. ./MotoPartsShop/
-WORKDIR /src/MotoPartsShop
+# Restaurar dependências
+RUN dotnet restore MotoPartsShop.csproj
 
-# Build em Release
-RUN dotnet publish -c Release -o /app
+# Publicar aplicação
+RUN dotnet publish MotoPartsShop.csproj -c Release -o /app/publish
 
 # Etapa runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app ./
 
-# Expor porta 80
+COPY --from=build /app/publish .
+
 EXPOSE 80
 
-# Iniciar app
 ENTRYPOINT ["dotnet", "MotoPartsShop.dll"]
